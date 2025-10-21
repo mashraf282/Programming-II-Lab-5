@@ -1,0 +1,6 @@
+package Student;
+
+public abstract class Validation {
+    // use all static methods, only for validating inputs
+    // abstract class to prevent instantiation
+}
