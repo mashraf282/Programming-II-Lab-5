@@ -7,7 +7,16 @@ import java.awt.event.ActionListener;
 
 import System.Validation;
 
+
 public class MyFrame extends JFrame {
+
+    private JButton createButton(String label, ActionListener actionListener) {
+        JButton button = new JButton(label);
+        button.addActionListener(actionListener);
+        button.setSize(150, 150);
+        button.setFont(new Font("Arial", Font.BOLD, 30));
+        return button;
+    }
 
     public MyFrame() {
         this.setTitle("Student Management System");
@@ -16,14 +25,14 @@ public class MyFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.setLayout(null);
         this.setVisible(true);
-        displayMainMenu();
+        displayLoginMenu();
     }
 
-    public void displayMainMenu() {
+    private void displayLoginMenu() {
         this.getContentPane().removeAll();
 
         // Title Label
-        JLabel titleLabel = new JLabel("Main Menu - Student Management System");
+        JLabel titleLabel = new JLabel("Login Menu - Student Management System");
         titleLabel.setVerticalAlignment(SwingConstants.CENTER);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
@@ -45,6 +54,7 @@ public class MyFrame extends JFrame {
         JTextField userInputField = new JTextField();
         userInputField.setBounds(this.getWidth() / 2 - 150, 200, 300, 40);
         userInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        userInputField.setText("admin");
         this.add(userInputField);
 
 
@@ -57,6 +67,7 @@ public class MyFrame extends JFrame {
         JTextField passwordInputField = new JTextField();
         passwordInputField.setBounds(this.getWidth() / 2 - 150, 300, 300, 40);
         passwordInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        passwordInputField.setText("admin123");
         this.add(passwordInputField);
 
 
@@ -67,21 +78,64 @@ public class MyFrame extends JFrame {
         loginButton.setFocusable(false);
         this.add(loginButton);
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(Validation.login(userInputField.getText(), passwordInputField.getText())){
-                    System.out.println("Login successful");
-                    // proceed to admin menu
-                } else {
-                    // show error message
-                    JOptionPane.showMessageDialog(MyFrame.this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
-                }
+        loginButton.addActionListener(e -> {
+            if (Validation.login(userInputField.getText(), passwordInputField.getText())) {
+                System.out.println("Login successful");
+                // proceed to admin menu
+                displayHome();
+            } else {
+                // show error message
+                JOptionPane.showMessageDialog(MyFrame.this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         this.revalidate();
         this.repaint();
 
+    }
+    private void displayHome(){
+        this.getContentPane().removeAll();
+
+        // Title Label
+        JLabel titleLabel = new JLabel("Welcome to Dashboard");
+        titleLabel.setVerticalAlignment(SwingConstants.CENTER);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.add(titleLabel);
+        titlePanel.setBounds(0, 50, this.getWidth(), 100);
+        titlePanel.setBackground(Color.LIGHT_GRAY);
+        titlePanel.setOpaque(true);
+        this.add(titlePanel);
+
+        //https://stackoverflow.com/questions/68893598/how-to-make-a-grid-of-buttons
+        JPanel homePanel = new JPanel();
+        homePanel.setLayout(new  GridLayout(2, 2, 10, 10));
+        homePanel.setBackground(this.getBackground());
+        homePanel.setBounds(0, 300, this.getWidth(), 300);
+        homePanel.add(createButton("Add", e -> addStudentMenu()));
+        homePanel.add(createButton("Delete", e -> deleteStudentMenu()));
+        homePanel.add(createButton("Edit", e -> editStudentMenu()));
+        homePanel.add(createButton("View", e-> viewStudentMenu()));
+        this.add(homePanel, BorderLayout.CENTER);
+
+        this.revalidate();
+        this.repaint();
+    }
+
+    private void addStudentMenu() {
+        this.getContentPane().removeAll();
+    }
+
+    private void deleteStudentMenu() {
+        displayLoginMenu();
+    }
+
+    private void viewStudentMenu() {
+
+    }
+
+    private void editStudentMenu() {
     }
 }
