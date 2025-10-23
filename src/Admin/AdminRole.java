@@ -1,9 +1,7 @@
 package Admin;
 
-import Student.StudentDatabase;
-import Student.StudentRecord;
-
-import java.util.ArrayList;
+import System.StudentDatabase;
+import System.StudentRecord;
 
 public class AdminRole {
 
@@ -14,13 +12,31 @@ public class AdminRole {
         this.database.readFromFile();
     }
 
+    public StudentDatabase getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(StudentDatabase database) {
+        this.database = database;
+    }
+
+
+
     public boolean addStudentRecord(StudentRecord record) {
         // return false if not successful
         return false;
     }
 
-    public ArrayList<StudentRecord> returnAllStudents() {
-        // sort by name/id
+    public String[][] returnAllStudentsID() {
+        // sort by id
+        // ID,Name,Age,Gender,Department,GPA,Grade
+        // convert StudentRecord list to String[][]
+        return null;
+    }
+
+    public String[][] returnAllStudentsByName() {
+        // sort by name
+        // ID,Name,Age,Gender,Department,GPA,Grade
         return null;
     }
 
@@ -34,11 +50,13 @@ public class AdminRole {
 
     }
 
-    public StudentRecord searchStudentRecord(int studentId) {
+    public String[] searchStudentRecord(int studentId) {
+        // convert StudentRecord to String[]
         return null;
     }
 
-    public ArrayList<StudentRecord> searchStudentRecord(String name) {
+    public String[][] searchStudentRecord(String name) {
+        // convert StudentRecord list to String[][]
         return null;
     }
 

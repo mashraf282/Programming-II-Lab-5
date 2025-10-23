@@ -1,10 +1,10 @@
-package Student;
+package System;
 
 public class StudentRecord {
     private int studentId, age, gpa;
     private String name, gender, department, grade;
 
-    public StudentRecord(int studentId, int age, int gpa, String name, String gender, String department) {
+    public StudentRecord(int studentId, String name, int age, String gender, String department, int gpa, String grade) {
         this.studentId = studentId;
         this.age = age;
         this.gpa = gpa;
