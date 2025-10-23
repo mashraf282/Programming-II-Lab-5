@@ -33,6 +33,7 @@ public class MyFrame extends JFrame {
         titlePanel.setBounds(0, 50, this.getWidth(), 100);
         titlePanel.setBackground(Color.LIGHT_GRAY);
         titlePanel.setOpaque(true);
+        this.add(titlePanel);
 
 
         // Username Input
@@ -79,7 +80,6 @@ public class MyFrame extends JFrame {
             }
         });
 
-        this.add(titlePanel);
         this.revalidate();
         this.repaint();
 

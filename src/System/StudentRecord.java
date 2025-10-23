@@ -11,6 +11,7 @@ public class StudentRecord {
         this.name = name;
         this.gender = gender;
         this.department = department;
+        this.grade = grade;
     }
 
     public int getStudentId() {
