@@ -9,4 +9,8 @@ public abstract class Validation {
         return username.equals("admin") && password.equals("admin123");
     }
 
+    public static boolean studentIsCorrect(StudentRecord record){
+        return false;
+    }
+
 }

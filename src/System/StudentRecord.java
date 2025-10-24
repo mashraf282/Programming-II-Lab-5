@@ -4,14 +4,24 @@ public class StudentRecord {
     private int studentId, age, gpa;
     private String name, gender, department, grade;
 
-    public StudentRecord(int studentId, String name, int age, String gender, String department, int gpa, String grade) {
+    public StudentRecord(int studentId, String name, int age, String gender, String department, int gpa) {
         this.studentId = studentId;
         this.age = age;
         this.gpa = gpa;
         this.name = name;
         this.gender = gender;
         this.department = department;
-        this.grade = grade;
+        this.grade = toGrade();
+    }
+
+    public StudentRecord(int studentId, String name, int age, String gender, String department, String grade) {
+        this.studentId = studentId;
+        this.age = age;
+        this.gpa = toGPA();
+        this.name = name;
+        this.gender = gender;
+        this.department = department;
+        this.grade = toGrade();
     }
 
     public int getStudentId() {

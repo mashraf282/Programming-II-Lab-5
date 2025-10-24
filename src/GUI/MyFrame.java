@@ -5,10 +5,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Admin.AdminRole;
 import System.Validation;
+import System.StudentDatabase;
+import System.StudentRecord;
 
 
 public class MyFrame extends JFrame {
+
+    private StudentDatabase database;
+    private AdminRole admin;
 
     private JButton createButton(String label, ActionListener actionListener) {
         JButton button = new JButton(label);
@@ -19,6 +25,7 @@ public class MyFrame extends JFrame {
     }
 
     public MyFrame() {
+//        database = new StudentDatabase("Students.txt");
         this.setTitle("Student Management System");
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,11 +87,10 @@ public class MyFrame extends JFrame {
 
         loginButton.addActionListener(e -> {
             if (Validation.login(userInputField.getText(), passwordInputField.getText())) {
-                System.out.println("Login successful");
-                // proceed to admin menu
+//                admin = new AdminRole(database);
                 displayHome();
             } else {
-                // show error message
+
                 JOptionPane.showMessageDialog(MyFrame.this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -109,7 +115,7 @@ public class MyFrame extends JFrame {
         titlePanel.setOpaque(true);
         this.add(titlePanel);
 
-        //https://stackoverflow.com/questions/68893598/how-to-make-a-grid-of-buttons
+        // Buttons label
         JPanel homePanel = new JPanel();
         homePanel.setLayout(new  GridLayout(2, 2, 10, 10));
         homePanel.setBackground(this.getBackground());
@@ -126,10 +132,124 @@ public class MyFrame extends JFrame {
 
     private void addStudentMenu() {
         this.getContentPane().removeAll();
+
+        // Title panel
+        JLabel titleLabel = new JLabel("Add student menu");
+        titleLabel.setVerticalAlignment(SwingConstants.CENTER);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.add(titleLabel);
+        titlePanel.setBounds(0, 50, this.getWidth(), 100);
+        titlePanel.setBackground(Color.LIGHT_GRAY);
+        titlePanel.setOpaque(true);
+        this.add(titlePanel);
+
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBounds(20, 200, 400, 400);
+
+        // ID
+        JPanel idInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel idInputLabel = new JLabel("Enter ID:");
+        idInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        JTextField idInputField = new JTextField(10);
+        idInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        idInputPanel.add(idInputLabel);
+        idInputPanel.add(idInputField);
+        formPanel.add(idInputPanel);
+
+        // Name
+        JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel nameInputLabel = new JLabel("Enter name:");
+        nameInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        JTextField nameInputField = new JTextField(10);
+        nameInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        nameInputPanel.add(nameInputLabel);
+        nameInputPanel.add(nameInputField);
+        formPanel.add(nameInputPanel);
+
+        // Age
+        JPanel ageInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel ageInputLabel = new JLabel("Enter age:");
+        ageInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        JTextField ageInputField = new JTextField(10);
+        ageInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        ageInputPanel.add(ageInputLabel);
+        ageInputPanel.add(ageInputField);
+        formPanel.add(ageInputPanel);
+
+        // Gender
+        JPanel genderInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel genderInputLabel = new JLabel("Enter gender:");
+        genderInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        String[] genderType = {"Male", "Female"};
+        JComboBox<String> genderInputBox = new JComboBox<>(genderType);
+        genderInputBox.setBackground(Color.WHITE);
+        genderInputBox.setOpaque(true);
+        genderInputPanel.add(genderInputLabel);
+        genderInputPanel.add(genderInputBox);
+        formPanel.add(genderInputPanel);
+
+        // Department
+        JPanel departmentInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel departmentInputLabel = new JLabel("Enter department:");
+        departmentInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        JTextField departmentInputField = new JTextField(10);
+        departmentInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        departmentInputPanel.add(departmentInputLabel);
+        departmentInputPanel.add(departmentInputField);
+        formPanel.add(departmentInputPanel);
+
+        // GPA or Grade
+        JPanel gradeInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel gradeInputLabel = new JLabel("Enter Grade/GPA:");
+        gradeInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        JTextField gradeInputField = new JTextField(10);
+        gradeInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        gradeInputPanel.add(gradeInputLabel);
+        gradeInputPanel.add(gradeInputField);
+        formPanel.add(gradeInputPanel);
+
+        // Submit Button
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton submitButton = new JButton("Submit");
+        submitButton.setFocusable(false);
+        submitButton.setPreferredSize(new Dimension(300, 50));
+        submitButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        buttonPanel.add(submitButton);
+        formPanel.add(Box.createVerticalStrut(20));
+        formPanel.add(buttonPanel);
+        this.add(formPanel);
+
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StudentRecord record = new StudentRecord(
+                        Integer.parseInt(idInputField.getText()),
+                        nameInputField.getText(),
+                        Integer.parseInt(ageInputField.getText()),
+                        genderInputBox.getSelectedItem().toString(),
+                        departmentInputField.getText(),
+                        gradeInputField.getText()
+                );
+                if(Validation.studentIsCorrect(record))
+                    JOptionPane.showMessageDialog(MyFrame.this, "Student added successfully", "Student add", JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    String[] options = {"Try again", "Go back"};
+                    JOptionPane.showOptionDialog(MyFrame.this, "Invalid input type.", "Student adding error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, 0);
+                }
+            }
+        });
+
+
+        this.revalidate();
+        this.repaint();
     }
 
     private void deleteStudentMenu() {
-        displayLoginMenu();
+
     }
 
     private void viewStudentMenu() {
@@ -137,5 +257,6 @@ public class MyFrame extends JFrame {
     }
 
     private void editStudentMenu() {
+
     }
 }
