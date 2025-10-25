@@ -232,7 +232,7 @@ public class MyFrame extends JFrame {
                         Integer.parseInt(ageInputField.getText()),
                         genderInputBox.getSelectedItem().toString(),
                         departmentInputField.getText(),
-                        gradeInputField.getText()
+                        Double.parseDouble(gradeInputField.getText())
                 );
                 if(Validation.studentIsCorrect(record))
                     JOptionPane.showMessageDialog(MyFrame.this, "Student added successfully", "Student add", JOptionPane.INFORMATION_MESSAGE);
