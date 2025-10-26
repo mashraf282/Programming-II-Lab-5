@@ -93,34 +93,44 @@ public class StudentDatabase {
     public void deleteRecord(StudentRecord record){
         for(StudentRecord sr : studentRecords){
             if(record.getStudentId() == sr.getStudentId())
-                studentRecords.remove(record.getStudentId());
+                studentRecords.remove(record);
         }
     }
 
-    public StudentRecord[] sortByGPA(){
-        StudentRecord[] records = studentRecords.toArray(new StudentRecord[0]);
-        Arrays.sort(records, Comparator.comparingDouble(StudentRecord::getGPA));
-
-        return records;
+    public String[][] sortByGPA(){
+        studentRecords.sort(Comparator.comparingDouble(StudentRecord::getGPA));
+        return toStringArray(studentRecords);
     }
 
-    public StudentRecord[] filterByGPA(Double minGPA, Double maxGPA){
+    public String[][] filterByGPA(Double minGPA, Double maxGPA){
         ArrayList<StudentRecord> students  = new ArrayList<>();
         for(StudentRecord record : studentRecords){
             if(record.getGPA() > minGPA && record.getGPA() < maxGPA)
                 students.add(record);
         }
-        StudentRecord[] records = students.toArray(new StudentRecord[0]);
-        return records;
+        return toStringArray(students);
     }
 
-    public StudentRecord[] filterByGPA(int gpa){
+    public String[][] filterByGPA(Double gpa){
         ArrayList<StudentRecord> students  = new ArrayList<>();
         for(StudentRecord record : studentRecords){
             if(record.getGPA() == gpa)
                 students.add(record);
         }
-        StudentRecord[] records = students.toArray(new StudentRecord[0]);
+        return toStringArray(students);
+    }
+
+    public String[][] toStringArray(ArrayList<StudentRecord> students) {
+        String[][] records = new String[students.size()][6];
+        for (int i = 0; i < students.size(); i++) {
+            StudentRecord record = students.get(i);
+            records[i][0] = Integer.toString(record.getStudentId());
+            records[i][1] = record.getName();
+            records[i][2] = Integer.toString(record.getAge());
+            records[i][3] = record.getGender();
+            records[i][4] = record.getDepartment();
+            records[i][5] = Double.toString(record.getGPA());
+        }
         return records;
     }
 

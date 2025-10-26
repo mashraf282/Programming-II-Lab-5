@@ -6,27 +6,20 @@ public class StudentRecord {
     private String name, gender, department, grade;
 
     public StudentRecord(int studentId, String name, int age, String gender, String department, Double gpa) {
-        this.studentId = studentId;
-        this.age = age;
-        this.gpa = gpa;
-        this.name = name;
-        this.gender = gender;
-        this.department = department;
-    }
-/*
-    public StudentRecord(int studentId, String name, int age, String gender, String department, String grade) {
         this.setStudentId(studentId);
         this.setAge(age);
         this.setName(name);
         this.setGender(gender);
         this.setDepartment(department);
-        this.setGrade(grade);
+        this.setGPA(gpa);
     }
-*/
+
+    public StudentRecord() { this.setStudentId(generateStudentId()); }
+
     public int getStudentId() { return studentId; }
 
     public boolean setStudentId(int studentId) {
-        StudentDatabase records = new StudentDatabase("jadh");
+        StudentDatabase records = new StudentDatabase("Students.txt");
         if(records.contains(studentId))
             return false;
         else {
@@ -80,7 +73,7 @@ public class StudentRecord {
     }
 
     public String lineRepresentation(){
-        // ID,Name,Age,Gender,Department,GPA,Grade
+        // ID,Name,Age,Gender,Department,GPA
         // comma separated
         return this.studentId+","+this.name+","+this.gender+","+this.department+","+this.grade;
     }
