@@ -31,7 +31,7 @@ public class StudentRecord {
     public int getAge() { return age;}
 
     public boolean setAge(int age) {
-        if(age >= 18 && age <= 4)
+        if(age < 17)
             return false;
         this.age = age;
         return true;
@@ -40,7 +40,7 @@ public class StudentRecord {
     public Double getGPA() { return gpa; }
 
     public boolean setGPA(Double gpa) {
-        if(gpa > 4.0 && gpa < 0)
+        if(gpa > 4.0 && gpa < 0.0)
             return false;
         this.gpa = gpa;
         return true;

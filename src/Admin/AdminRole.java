@@ -27,11 +27,12 @@ public class AdminRole {
 
 
     public boolean addStudentRecord(StudentRecord record) {
-        ArrayList<StudentRecord> records = database.getStudentRecords();
-        if(records.contains(record.getStudentId()))
+        if(database.getStudentRecords().contains(record.getStudentId()))
             return false;
-        else
+        else {
+            database.addRecord(record);
             return true;
+        }
     }
 
     public String[][] returnAllStudentsID() {
@@ -81,21 +82,15 @@ public class AdminRole {
         }
         return null;
     }
-//did u mean String[] instead of String[][]
-    public String[] searchStudentRecord(String name) {
+
+    public String[][] searchStudentRecord(String name) {
+        ArrayList<StudentRecord> students = new ArrayList<>();
         for(StudentRecord record : database.getStudentRecords()){
             if(record.getName() == name) {
-                String[] student = new String[6];
-                student[0] = Integer.toString(record.getStudentId());
-                student[1] = record.getName();
-                student[2] = Integer.toString(record.getAge());
-                student[3] = record.getGender();
-                student[4] = record.getDepartment();
-                student[5] = Double.toString(record.getGPA());
-                return student;
+                students.add(record);
             }
         }
-        return null;
+        return database.toStringArray(students);
     }
 
     public void logout() {

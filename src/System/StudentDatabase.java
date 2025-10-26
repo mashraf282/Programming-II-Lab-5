@@ -77,11 +77,6 @@ public class StudentDatabase {
         return sr;
     }
 
-    //leh da hena.. leh de method ma3ana
-    public String recordToString(StudentRecord record){
-        return record.lineRepresentation();
-    }
-
     public boolean contains(int studentId){
         for(StudentRecord record : studentRecords) {
             if (record.getStudentId() == studentId)
@@ -95,6 +90,10 @@ public class StudentDatabase {
             if(record.getStudentId() == sr.getStudentId())
                 studentRecords.remove(record);
         }
+    }
+
+    public void addRecord(StudentRecord record){
+        studentRecords.add(record);
     }
 
     public String[][] sortByGPA(){
