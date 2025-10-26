@@ -24,10 +24,8 @@ public class AdminRole {
         this.database = database;
     }
 
-
-
     public boolean addStudentRecord(StudentRecord record) {
-        if(database.getStudentRecords().contains(record.getStudentId()))
+        if (database.getStudentRecords().contains(record.getStudentId()))
             return false;
         else {
             database.addRecord(record);
@@ -48,8 +46,8 @@ public class AdminRole {
     }
 
     public void updateStudentRecord(StudentRecord record) {
-        for(StudentRecord student : database.getStudentRecords()){
-            if(student.getStudentId() == record.getStudentId()){
+        for (StudentRecord student : database.getStudentRecords()) {
+            if (student.getStudentId() == record.getStudentId()) {
                 student.setName(record.getName());
                 student.setAge(record.getAge());
                 student.setGender(record.getGender());
@@ -60,16 +58,16 @@ public class AdminRole {
     }
 
     public boolean deleteStudentRecord(StudentRecord record) {
-        if(database.contains(record.getStudentId())) {
+        if (database.contains(record.getStudentId())) {
             database.deleteRecord(record);
             return true;
         }
         return false;
     }
 
-    public String[] searchStudentRecord(int studentId) {
-        for(StudentRecord record : database.getStudentRecords()){
-            if(record.getStudentId() == studentId) {
+    public String[][] searchStudentRecord(int studentId) {
+        for (StudentRecord record : database.getStudentRecords()) {
+            if (record.getStudentId() == studentId) {
                 String[] student = new String[6];
                 student[0] = Integer.toString(record.getStudentId());
                 student[1] = record.getName();
@@ -77,16 +75,23 @@ public class AdminRole {
                 student[3] = record.getGender();
                 student[4] = record.getDepartment();
                 student[5] = Double.toString(record.getGPA());
-                return student;
+                return new String[][]{student};
             }
         }
         return null;
     }
 
+    public StudentRecord getStudentByID(int studentId) {
+        for (StudentRecord record : database.getStudentRecords())
+            if (record.getStudentId() == studentId)
+                return record;
+        return null;
+    }
+
     public String[][] searchStudentRecord(String name) {
         ArrayList<StudentRecord> students = new ArrayList<>();
-        for(StudentRecord record : database.getStudentRecords()){
-            if(record.getName().equals(name)) {
+        for (StudentRecord record : database.getStudentRecords()) {
+            if (record.getName().toLowerCase().contains(name.toLowerCase())) {
                 students.add(record);
             }
         }

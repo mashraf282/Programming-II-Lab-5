@@ -40,7 +40,7 @@ public class StudentRecord {
     public Double getGPA() { return gpa; }
 
     public boolean setGPA(Double gpa) {
-        if(gpa > 4.0 && gpa < 0.0)
+        if(gpa < 0.0 || gpa > 4.0)
             return false;
         this.gpa = gpa;
         return true;
@@ -52,7 +52,13 @@ public class StudentRecord {
 
     public String getGender() { return gender; }
 
-    public void setGender(String gender) { this.gender = gender; }
+    public boolean setGender(String gender) {
+        if(gender.equals("male") ||  gender.equals("female")) {
+            this.gender = gender;
+            return true;
+        }
+        return false;
+    }
 
     public String getDepartment() { return department; }
 
@@ -72,6 +78,10 @@ public class StudentRecord {
         // ID,Name,Age,Gender,Department,GPA
         // comma separated
         return this.studentId+","+this.name+","+this.age+","+this.gender+","+this.department+","+this.gpa;
+    }
+
+    public String[] arrayRepresentation(){
+        return null;
     }
 
 

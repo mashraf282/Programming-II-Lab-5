@@ -13,6 +13,7 @@ public class StudentDatabase {
     public StudentDatabase(String filePath) {
         this.filePath = filePath;
         this.studentRecords = new ArrayList<>();
+
     }
 
     public ArrayList<StudentRecord> getStudentRecords() {
@@ -128,6 +129,10 @@ public class StudentDatabase {
             records[i][5] = Double.toString(record.getGPA());
         }
         return records;
+    }
+
+    public String[][] toStringArray(){
+        return toStringArray(this.studentRecords);
     }
 
     public void filterByGrade(String grade){

@@ -1,10 +1,14 @@
 package GUI;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicReference;
 
 import Admin.AdminRole;
 import System.StudentDatabase;
@@ -17,6 +21,10 @@ public class MyFrame extends JFrame {
 
     private AdminRole admin;
 
+    public AdminRole getAdmin() {
+        return admin;
+    }
+
     private JButton createButton(String label, ActionListener actionListener) {
         JButton button = new JButton(label);
         button.addActionListener(actionListener);
@@ -25,36 +33,8 @@ public class MyFrame extends JFrame {
         return button;
     }
 
-    private JButton createReturnButton(){
-        JButton button = new JButton("Go back");
-        button.setFocusable(false);
-//        button.setFont(new Font("Arial", Font.BOLD, 30));
-        button.setBounds(0,0,300,30);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                displayHome();
-            }
-        });
-        return button;
-    }
-
-    public MyFrame() {
-        this.setTitle("Student Management System");
-        this.setSize(1280, 720);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-        this.setLayout(null);
-        this.setVisible(true);
-        this.setResizable(false);
-        displayLoginMenu();
-    }
-
-    private void displayLoginMenu() {
-        this.getContentPane().removeAll();
-
-        // Title Label
-        JLabel titleLabel = new JLabel("Login Menu - Student Management System");
+    private JPanel createHeaderPanel(String title) {
+        JLabel titleLabel = new JLabel(title);
         titleLabel.setVerticalAlignment(SwingConstants.CENTER);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
@@ -64,7 +44,39 @@ public class MyFrame extends JFrame {
         titlePanel.setBounds(0, 50, this.getWidth(), 100);
         titlePanel.setBackground(Color.LIGHT_GRAY);
         titlePanel.setOpaque(true);
-        this.add(titlePanel);
+        return titlePanel;
+    }
+
+    private JButton createReturnButton() {
+        JButton button = new JButton("Go back");
+        button.setFocusable(false);
+//        button.setFont(new Font("Arial", Font.BOLD, 30));
+        button.setBounds(0, 0, 300, 30);
+        button.addActionListener(e -> displayHome());
+        return button;
+    }
+
+    public MyFrame() {
+        this.setTitle("Student Management System");
+        this.setSize(1280, 720);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                getAdmin().logout();
+                MyFrame.this.dispose();
+            }
+        });
+        this.setLocationRelativeTo(null);
+        this.setLayout(null);
+        this.setVisible(true);
+        this.setResizable(false);
+        displayLoginMenu();
+    }
+
+    private void displayLoginMenu() {
+        this.getContentPane().removeAll();
+        this.add(createHeaderPanel("Login Menu - Student Management System"));
 
 
         // Username Input
@@ -92,7 +104,6 @@ public class MyFrame extends JFrame {
         passwordInputField.setText("admin123");
         this.add(passwordInputField);
 
-
         // Login Button
         JButton loginButton = new JButton("Login");
         loginButton.setBounds(this.getWidth() / 2 - 75, 380, 150, 40);
@@ -114,36 +125,25 @@ public class MyFrame extends JFrame {
         this.repaint();
 
     }
-    private void displayHome(){
+
+    private void displayHome() {
         this.getContentPane().removeAll();
-
-        // Title Label
-        JLabel titleLabel = new JLabel("Welcome to Dashboard");
-        titleLabel.setVerticalAlignment(SwingConstants.CENTER);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-
-        JPanel titlePanel = new JPanel();
-        titlePanel.add(titleLabel);
-        titlePanel.setBounds(0, 50, this.getWidth(), 100);
-        titlePanel.setBackground(Color.LIGHT_GRAY);
-        titlePanel.setOpaque(true);
-        this.add(titlePanel);
+        this.add(createHeaderPanel("Welcome to Dashboard"));
 
         // Buttons label
         JPanel homePanel = new JPanel();
-        homePanel.setLayout(new  GridLayout(2, 2, 10, 10));
+        homePanel.setLayout(new GridLayout(2, 2, 10, 10));
         homePanel.setBackground(this.getBackground());
         homePanel.setBounds(0, 200, this.getWidth(), 300);
         homePanel.add(createButton("Add", e -> addStudentMenu()));
         homePanel.add(createButton("Delete", e -> viewStudentMenu(true)));
         homePanel.add(createButton("Search", e -> searchStudentMenu()));
-        homePanel.add(createButton("View", e-> viewStudentMenu(false)));
+        homePanel.add(createButton("View", e -> viewStudentMenu(false)));
         this.add(homePanel, BorderLayout.CENTER);
 
         // Log out button
         JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        logoutPanel.setBounds(this.getWidth() / 2 - 150, 600 ,300,50);
+        logoutPanel.setBounds(this.getWidth() / 2 - 150, 600, 300, 50);
         JButton logoutButton = new JButton("Log out");
         logoutButton.setFocusable(false);
         logoutButton.setPreferredSize(new Dimension(300, 50));
@@ -159,26 +159,16 @@ public class MyFrame extends JFrame {
             }
         });
 
-
         this.revalidate();
         this.repaint();
     }
 
     private void addStudentMenu() {
         this.getContentPane().removeAll();
+        this.add(createHeaderPanel("Add Students Menu"));
+        this.setLayout(null);
 
-        // Title panel
-        JLabel titleLabel = new JLabel("Add student menu");
-        titleLabel.setVerticalAlignment(SwingConstants.CENTER);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-
-        JPanel titlePanel = new JPanel();
-        titlePanel.add(titleLabel);
-        titlePanel.setBounds(0, 50, this.getWidth(), 100);
-        titlePanel.setBackground(Color.LIGHT_GRAY);
-        titlePanel.setOpaque(true);
-        this.add(titlePanel);
+//        enum Idx {Id, Name, Age, Gender, Department}
 
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
@@ -200,8 +190,9 @@ public class MyFrame extends JFrame {
         ageInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
         JTextField ageInputField = new JTextField(10);
         ageInputField.setFont(new Font("Arial", Font.PLAIN, 20));
+        ageInputField.setBounds(100, 20, 20, 20);
         ageInputPanel.add(ageInputLabel);
-        ageInputPanel.add(ageInputField);
+        ageInputPanel.add(ageInputField, FlowLayout.CENTER);
         formPanel.add(ageInputPanel);
 
         // Gender
@@ -253,104 +244,68 @@ public class MyFrame extends JFrame {
                 StudentRecord record = new StudentRecord();
                 record.setName(nameInputField.getText());
                 record.setGender(genderInputBox.getSelectedItem().toString());
-                record.setDepartment( departmentInputField.getText());
-                if(record.setAge(Integer.parseInt(ageInputField.getText())))
-                {
-                    JOptionPane.showMessageDialog(MyFrame.this,"Invalid grade.","Adding student: error",JOptionPane.ERROR_MESSAGE);
+                record.setDepartment(departmentInputField.getText());
+                if (record.setAge(Integer.parseInt(ageInputField.getText()))) {
+                    JOptionPane.showMessageDialog(MyFrame.this, "Invalid grade.", "Adding student: error", JOptionPane.ERROR_MESSAGE);
                     gradeInputField.setText("");
-                }
-                else if(record.setGPA(Double.parseDouble(gradeInputField.getText())))
-                {
-                    JOptionPane.showMessageDialog(MyFrame.this,"Invalid age.","Adding student: error",JOptionPane.ERROR_MESSAGE);
+                } else if (record.setGPA(Double.parseDouble(gradeInputField.getText()))) {
+                    JOptionPane.showMessageDialog(MyFrame.this, "Invalid age.", "Adding student: error", JOptionPane.ERROR_MESSAGE);
                     ageInputField.setText("");
-                }
-                else {
+                } else {
                     admin.addStudentRecord(record);
-                    JOptionPane.showMessageDialog(MyFrame.this,"Student added","Adding student",JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(MyFrame.this, "Student added", "Adding student", JOptionPane.INFORMATION_MESSAGE);
                 }
 
             }
         });
-
 
         this.add(createReturnButton());
         this.revalidate();
         this.repaint();
     }
 
-
     private void viewStudentMenu(boolean delete) {
         this.getContentPane().removeAll();
-
-        // Title panel
-        JLabel titleLabel = new JLabel("View Student menu");
-        if(delete)
-            titleLabel.setText("Delete Student menu");
-        titleLabel.setVerticalAlignment(SwingConstants.CENTER);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-
-        JPanel titlePanel = new JPanel();
-        titlePanel.add(titleLabel);
-        titlePanel.setBounds(0, 50, this.getWidth(), 100);
-        titlePanel.setBackground(Color.LIGHT_GRAY);
-        titlePanel.setOpaque(true);
-        this.add(titlePanel);
-
-        // Table
-        JTable viewTable;
-        JScrollPane sp = null;
-
-        String[] info = {"ID", "Name", "Age", "Gender", "Department", "GPA"};
-        String[][] students = admin.returnAllStudentsID();
-        DefaultTableModel model = new DefaultTableModel(students, info);
-        viewTable = new JTable(model){
-                @Override
-                public boolean isCellEditable(int row,int column) {
-                    return false;
-                }
-            };
-        sp = new JScrollPane(viewTable);
-        sp.setBounds(0, 150, this.getWidth(), this.getHeight() - 60);
         this.setLayout(null);
-        this.add(sp);
+        this.add(createHeaderPanel(delete ? "Delete Students Menus" : "View Students Menu"));
+
+        String[] columnNames = {"ID", "Name", "Age", "Gender", "Department", "GPA"};
+        String[][] students = admin.getDatabase().toStringArray();
+        DefaultTableModel model = new DefaultTableModel(students, columnNames);
+
+        JTable viewTable = new JTable(model) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        viewTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 20));
+        viewTable.setRowHeight(25);
+        viewTable.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        JScrollPane scrollPane = new JScrollPane(viewTable);
+        scrollPane.setBounds(0, 150, this.getWidth(), this.getHeight() - 60);
+        this.add(scrollPane);
 
         // Delete
-        if(delete){
+        if (delete) {
             JButton deleteButton = new JButton("Delete");
-            deleteButton.setBounds(this.getWidth() - 350,0,300,30);
+            deleteButton.setBounds(this.getWidth() - 350, 0, 300, 30);
             deleteButton.setFocusable(false);
             this.add(deleteButton);
-            deleteButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int row;
-                    if((row = viewTable.getSelectedRow()) > -1)
-                    {
-                        int choice = JOptionPane.showConfirmDialog(MyFrame.this,
-                                "Are you sure you want to delete this student?",
-                                "Confirm Deletion",
-                                JOptionPane.YES_NO_OPTION
-                                );
-                        if(choice == JOptionPane.YES_OPTION)
-                        {
-                            StudentRecord record = new StudentRecord(
-                                    Integer.parseInt(viewTable.getValueAt(row,0).toString()),
-                                    viewTable.getValueAt(row,1).toString(),
-                                    Integer.parseInt(viewTable.getValueAt(row,2).toString()),
-                                    viewTable.getValueAt(row,3).toString(),
-                                    viewTable.getValueAt(row,4).toString(),
-                                    Double.parseDouble(viewTable.getValueAt(row,5).toString())
-                            );
-
-                          admin.deleteStudentRecord(record);
-                          model.removeRow(row);
-                        }
+            deleteButton.addActionListener(e -> {
+                int row;
+                if ((row = viewTable.getSelectedRow()) > -1) {
+                    int choice = JOptionPane.showConfirmDialog(MyFrame.this, "Are you sure you want to delete this student?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        var record = admin.getStudentByID(Integer.parseInt(viewTable.getValueAt(row, 0).toString()));
+                        admin.deleteStudentRecord(record);
+                        model.removeRow(row);
                     }
                 }
             });
         }
-
 
         this.add(createReturnButton());
         this.revalidate();
@@ -358,7 +313,126 @@ public class MyFrame extends JFrame {
     }
 
     private void searchStudentMenu() {
+
         this.getContentPane().removeAll();
+        this.setLayout(null);
+        this.add(createHeaderPanel("Search Student Panel"));
+
+        String[] columnNames = {"ID", "Name", "Age", "Gender", "Department", "GPA"};
+        String[][] students = admin.getDatabase().toStringArray();
+        DefaultTableModel model = new DefaultTableModel(students, columnNames);
+
+        JTable viewTable = new JTable(model) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column != 0;
+            }
+        };
+        viewTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 20));
+        viewTable.setRowHeight(25);
+        viewTable.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        JScrollPane scrollPane = new JScrollPane(viewTable);
+        scrollPane.setBounds(0, 200, this.getWidth(), this.getHeight() - 60);
+        this.add(scrollPane);
+
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new FlowLayout());
+        searchPanel.setBounds(this.getWidth() / 2 - 150, 150, 300, 50);
+
+        JTextField searchTextField = new JTextField(10);
+        searchTextField.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        TableModelListener[] listenerHolder = new TableModelListener[1];
+
+        listenerHolder[0] = e -> {
+            if (e.getType() == TableModelEvent.UPDATE) {
+                int selectedRow = e.getFirstRow();
+                int selectedColumn = e.getColumn();
+                String modified = viewTable.getValueAt(selectedRow, selectedColumn).toString();
+                int id = Integer.parseInt(viewTable.getValueAt(selectedRow, 0).toString());
+                viewTable.getModel().removeTableModelListener(listenerHolder[0]);
+                boolean is_modified = false;
+                String message = "Invalid Input";
+
+                if (modified == null || modified.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(MyFrame.this, "Cannot Change to empty Name", "Error modifying name", JOptionPane.ERROR_MESSAGE);
+                    String[] fields = admin.getStudentByID(id).lineRepresentation().split(",");
+                    System.out.println(fields[selectedColumn]);
+                    viewTable.setValueAt(fields[selectedColumn], selectedRow, selectedColumn);
+                } else
+                    switch (selectedColumn) {
+                        case 1:
+                            if (modified.matches("[a-zA-Z]+")) {
+                                admin.getStudentByID(id).setName(modified);
+                                is_modified = true;
+                            } else
+                                message = "invalid name";
+                            break;
+                        case 2:
+                            if (modified.matches("[0-9]+") && admin.getStudentByID(id).setAge(Integer.parseInt(modified)))
+                                is_modified = true;
+                            else
+                                message = "invalid age";
+                            break;
+                        case 3:
+                            if (admin.getStudentByID(id).setGender(modified)) {
+                                is_modified = true;
+                            } else
+                                message = "invalid gender";
+                            break;
+                        case 4:
+                            if(modified.matches("[a-zA-Z]+]")) {
+                                admin.getStudentByID(id).setDepartment(modified);
+                                is_modified = true;
+                            }
+                            else
+                                message = "invalid department";
+                            break;
+                        case 5:
+                            if(admin.getStudentByID(id).setGPA(Double.parseDouble(modified))){
+                                is_modified = true;
+                            }
+                            else
+                                message = "invalid GPA";
+                            break;
+                    }
+                if (!is_modified) {
+                    JOptionPane.showMessageDialog(MyFrame.this, message, "Error editing student", JOptionPane.ERROR_MESSAGE);
+                    String[] fields = admin.getStudentByID(id).lineRepresentation().split(",");
+                    System.out.println(fields[selectedColumn]);
+                    viewTable.setValueAt(fields[selectedColumn], selectedRow, selectedColumn);
+                }
+
+            }
+            viewTable.getModel().addTableModelListener(listenerHolder[0]);
+        };
+
+        viewTable.getModel().addTableModelListener(listenerHolder[0]);
+
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> {
+            if (viewTable.isEditing())
+                viewTable.getCellEditor().stopCellEditing();
+            viewTable.getModel().removeTableModelListener(listenerHolder[0]);
+            String search_key = searchTextField.getText();
+            boolean is_numeric = true;
+            int id = 0;
+            try {
+                id = Integer.parseInt(search_key);
+            } catch (NumberFormatException nfe) {
+                model.setDataVector(admin.searchStudentRecord(search_key), columnNames);
+                is_numeric = false;
+            }
+            if (is_numeric) {
+                model.setDataVector(admin.searchStudentRecord(id), columnNames);
+            }
+            viewTable.getModel().addTableModelListener(listenerHolder[0]);
+        });
+
+        searchPanel.add(searchTextField);
+        searchPanel.add(searchButton);
+        this.add(searchPanel);
 
         this.add(createReturnButton());
         this.revalidate();

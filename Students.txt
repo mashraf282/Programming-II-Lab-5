@@ -1,3 +1,4 @@
-1000,Ahmed,20,Male,Computer Science,3.9
-1001,Ali,21,Male,Engineering,3.5
-1002,Jana,22,Female,Mechanics,3.2
+123,Mi,19,male,compu,3.91
+255,dodo,23,male,compu,3.99
+15,krkr,25,female,electro,4.0
+30,liy,30,female,electro,3.0
