@@ -1,19 +1,20 @@
 package GUI;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import Admin.AdminRole;
-import System.Validation;
 import System.StudentDatabase;
 import System.StudentRecord;
+
+import static java.lang.System.exit;
 
 
 public class MyFrame extends JFrame {
 
-    private StudentDatabase database;
     private AdminRole admin;
 
     private JButton createButton(String label, ActionListener actionListener) {
@@ -24,14 +25,28 @@ public class MyFrame extends JFrame {
         return button;
     }
 
+    private JButton createReturnButton(){
+        JButton button = new JButton("Go back");
+        button.setFocusable(false);
+//        button.setFont(new Font("Arial", Font.BOLD, 30));
+        button.setBounds(0,0,300,30);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayHome();
+            }
+        });
+        return button;
+    }
+
     public MyFrame() {
-//        database = new StudentDatabase("Students.txt");
         this.setTitle("Student Management System");
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(null);
         this.setVisible(true);
+        this.setResizable(false);
         displayLoginMenu();
     }
 
@@ -86,11 +101,11 @@ public class MyFrame extends JFrame {
         this.add(loginButton);
 
         loginButton.addActionListener(e -> {
-            if (Validation.login(userInputField.getText(), passwordInputField.getText())) {
-//                admin = new AdminRole(database);
+            if (AdminRole.login(userInputField.getText(), passwordInputField.getText())) {
+
+                admin = new AdminRole(new StudentDatabase("Students.txt"));
                 displayHome();
             } else {
-
                 JOptionPane.showMessageDialog(MyFrame.this, "Invalid username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -119,12 +134,31 @@ public class MyFrame extends JFrame {
         JPanel homePanel = new JPanel();
         homePanel.setLayout(new  GridLayout(2, 2, 10, 10));
         homePanel.setBackground(this.getBackground());
-        homePanel.setBounds(0, 300, this.getWidth(), 300);
+        homePanel.setBounds(0, 200, this.getWidth(), 300);
         homePanel.add(createButton("Add", e -> addStudentMenu()));
-        homePanel.add(createButton("Delete", e -> deleteStudentMenu()));
-        homePanel.add(createButton("Edit", e -> editStudentMenu()));
-        homePanel.add(createButton("View", e-> viewStudentMenu()));
+        homePanel.add(createButton("Delete", e -> viewStudentMenu(true)));
+        homePanel.add(createButton("Search", e -> searchStudentMenu()));
+        homePanel.add(createButton("View", e-> viewStudentMenu(false)));
         this.add(homePanel, BorderLayout.CENTER);
+
+        // Log out button
+        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        logoutPanel.setBounds(this.getWidth() / 2 - 150, 600 ,300,50);
+        JButton logoutButton = new JButton("Log out");
+        logoutButton.setFocusable(false);
+        logoutButton.setPreferredSize(new Dimension(300, 50));
+        logoutButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        logoutPanel.add(logoutButton);
+        this.add(logoutPanel);
+
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                admin.logout();
+                exit(1);
+            }
+        });
+
 
         this.revalidate();
         this.repaint();
@@ -149,16 +183,6 @@ public class MyFrame extends JFrame {
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBounds(20, 200, 400, 400);
-
-        // ID
-        JPanel idInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel idInputLabel = new JLabel("Enter ID:");
-        idInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-        JTextField idInputField = new JTextField(10);
-        idInputField.setFont(new Font("Arial", Font.PLAIN, 20));
-        idInputPanel.add(idInputLabel);
-        idInputPanel.add(idInputField);
-        formPanel.add(idInputPanel);
 
         // Name
         JPanel nameInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -226,37 +250,118 @@ public class MyFrame extends JFrame {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                StudentRecord record = new StudentRecord(
-                        Integer.parseInt(idInputField.getText()),
-                        nameInputField.getText(),
-                        Integer.parseInt(ageInputField.getText()),
-                        genderInputBox.getSelectedItem().toString(),
-                        departmentInputField.getText(),
-                        Double.parseDouble(gradeInputField.getText())
-                );
-                if(Validation.studentIsCorrect(record))
-                    JOptionPane.showMessageDialog(MyFrame.this, "Student added successfully", "Student add", JOptionPane.INFORMATION_MESSAGE);
-                else {
-                    String[] options = {"Try again", "Go back"};
-                    JOptionPane.showOptionDialog(MyFrame.this, "Invalid input type.", "Student adding error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, 0);
+                StudentRecord record = new StudentRecord();
+                record.setName(nameInputField.getText());
+                record.setGender(genderInputBox.getSelectedItem().toString());
+                record.setDepartment( departmentInputField.getText());
+                if(record.setAge(Integer.parseInt(ageInputField.getText())))
+                {
+                    JOptionPane.showMessageDialog(MyFrame.this,"Invalid grade.","Adding student: error",JOptionPane.ERROR_MESSAGE);
+                    gradeInputField.setText("");
                 }
+                else if(record.setGPA(Double.parseDouble(gradeInputField.getText())))
+                {
+                    JOptionPane.showMessageDialog(MyFrame.this,"Invalid age.","Adding student: error",JOptionPane.ERROR_MESSAGE);
+                    ageInputField.setText("");
+                }
+                else {
+                    admin.addStudentRecord(record);
+                    JOptionPane.showMessageDialog(MyFrame.this,"Student added","Adding student",JOptionPane.INFORMATION_MESSAGE);
+                }
+
             }
         });
 
 
+        this.add(createReturnButton());
         this.revalidate();
         this.repaint();
     }
 
-    private void deleteStudentMenu() {
 
+    private void viewStudentMenu(boolean delete) {
+        this.getContentPane().removeAll();
+
+        // Title panel
+        JLabel titleLabel = new JLabel("View Student menu");
+        if(delete)
+            titleLabel.setText("Delete Student menu");
+        titleLabel.setVerticalAlignment(SwingConstants.CENTER);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.add(titleLabel);
+        titlePanel.setBounds(0, 50, this.getWidth(), 100);
+        titlePanel.setBackground(Color.LIGHT_GRAY);
+        titlePanel.setOpaque(true);
+        this.add(titlePanel);
+
+        // Table
+        JTable viewTable;
+        JScrollPane sp = null;
+
+        String[] info = {"ID", "Name", "Age", "Gender", "Department", "GPA"};
+        String[][] students = admin.returnAllStudentsID();
+        DefaultTableModel model = new DefaultTableModel(students, info);
+        viewTable = new JTable(model){
+                @Override
+                public boolean isCellEditable(int row,int column) {
+                    return false;
+                }
+            };
+        sp = new JScrollPane(viewTable);
+        sp.setBounds(0, 150, this.getWidth(), this.getHeight() - 60);
+        this.setLayout(null);
+        this.add(sp);
+
+        // Delete
+        if(delete){
+            JButton deleteButton = new JButton("Delete");
+            deleteButton.setBounds(this.getWidth() - 350,0,300,30);
+            deleteButton.setFocusable(false);
+            this.add(deleteButton);
+            deleteButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int row;
+                    if((row = viewTable.getSelectedRow()) > -1)
+                    {
+                        int choice = JOptionPane.showConfirmDialog(MyFrame.this,
+                                "Are you sure you want to delete this student?",
+                                "Confirm Deletion",
+                                JOptionPane.YES_NO_OPTION
+                                );
+                        if(choice == JOptionPane.YES_OPTION)
+                        {
+                            StudentRecord record = new StudentRecord(
+                                    Integer.parseInt(viewTable.getValueAt(row,0).toString()),
+                                    viewTable.getValueAt(row,1).toString(),
+                                    Integer.parseInt(viewTable.getValueAt(row,2).toString()),
+                                    viewTable.getValueAt(row,3).toString(),
+                                    viewTable.getValueAt(row,4).toString(),
+                                    Double.parseDouble(viewTable.getValueAt(row,5).toString())
+                            );
+
+                          admin.deleteStudentRecord(record);
+                          model.removeRow(row);
+                        }
+                    }
+                }
+            });
+        }
+
+
+        this.add(createReturnButton());
+        this.revalidate();
+        this.repaint();
     }
 
-    private void viewStudentMenu() {
+    private void searchStudentMenu() {
+        this.getContentPane().removeAll();
 
-    }
-
-    private void editStudentMenu() {
-
+        this.add(createReturnButton());
+        this.revalidate();
+        this.repaint();
     }
 }

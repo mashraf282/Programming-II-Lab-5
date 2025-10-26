@@ -57,13 +57,9 @@ public class StudentRecord {
     public String getDepartment() { return department; }
 
     public void setDepartment(String department) { this.department = department; }
-/*
-    public boolean setGrade(String grade){ this.grade = grade; }
 
-    public String getGrade(){ return this.grade; }
-*/
     public int generateStudentId(){
-        StudentDatabase records = new StudentDatabase("filePath");
+        StudentDatabase records = new StudentDatabase("Students.txt");
         int id = 0;
         for(StudentRecord record : records.getStudentRecords()){
             if(record.getStudentId() > id)
@@ -75,7 +71,7 @@ public class StudentRecord {
     public String lineRepresentation(){
         // ID,Name,Age,Gender,Department,GPA
         // comma separated
-        return this.studentId+","+this.name+","+this.gender+","+this.department+","+this.grade;
+        return this.studentId+","+this.name+","+this.age+","+this.gender+","+this.department+","+this.gpa;
     }
 
 

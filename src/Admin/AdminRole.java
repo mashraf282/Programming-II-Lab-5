@@ -86,7 +86,7 @@ public class AdminRole {
     public String[][] searchStudentRecord(String name) {
         ArrayList<StudentRecord> students = new ArrayList<>();
         for(StudentRecord record : database.getStudentRecords()){
-            if(record.getName() == name) {
+            if(record.getName().equals(name)) {
                 students.add(record);
             }
         }
@@ -95,6 +95,11 @@ public class AdminRole {
 
     public void logout() {
         database.writeToFile();
+    }
+
+    public static boolean login(String username, String password) {
+        // hardcoded for simplicity
+        return username.equals("admin") && password.equals("admin123");
     }
 
 }

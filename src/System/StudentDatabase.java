@@ -86,10 +86,7 @@ public class StudentDatabase {
     }
 
     public void deleteRecord(StudentRecord record){
-        for(StudentRecord sr : studentRecords){
-            if(record.getStudentId() == sr.getStudentId())
-                studentRecords.remove(record);
-        }
+        studentRecords.remove(record);
     }
 
     public void addRecord(StudentRecord record){
