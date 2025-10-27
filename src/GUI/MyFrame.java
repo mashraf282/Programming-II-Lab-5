@@ -88,7 +88,7 @@ public class MyFrame extends JFrame {
         JTextField userInputField = new JTextField();
         userInputField.setBounds(this.getWidth() / 2 - 150, 200, 300, 40);
         userInputField.setFont(new Font("Arial", Font.PLAIN, 20));
-        userInputField.setText("admin");
+//        userInputField.setText("admin");
         this.add(userInputField);
 
 
@@ -101,7 +101,7 @@ public class MyFrame extends JFrame {
         JTextField passwordInputField = new JTextField();
         passwordInputField.setBounds(this.getWidth() / 2 - 150, 300, 300, 40);
         passwordInputField.setFont(new Font("Arial", Font.PLAIN, 20));
-        passwordInputField.setText("admin123");
+//        passwordInputField.setText("admin123");
         this.add(passwordInputField);
 
         // Login Button
@@ -219,7 +219,7 @@ public class MyFrame extends JFrame {
 
         // GPA or Grade
         JPanel gradeInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel gradeInputLabel = new JLabel("Enter Grade/GPA:");
+        JLabel gradeInputLabel = new JLabel("Enter GPA:");
         gradeInputLabel.setFont(new Font("Arial", Font.PLAIN, 20));
         JTextField gradeInputField = new JTextField(10);
         gradeInputField.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -242,20 +242,95 @@ public class MyFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 StudentRecord record = new StudentRecord();
-                record.setName(nameInputField.getText());
-                record.setGender(genderInputBox.getSelectedItem().toString());
-                record.setDepartment(departmentInputField.getText());
-                if (record.setAge(Integer.parseInt(ageInputField.getText()))) {
-                    JOptionPane.showMessageDialog(MyFrame.this, "Invalid grade.", "Adding student: error", JOptionPane.ERROR_MESSAGE);
-                    gradeInputField.setText("");
-                } else if (record.setGPA(Double.parseDouble(gradeInputField.getText()))) {
-                    JOptionPane.showMessageDialog(MyFrame.this, "Invalid age.", "Adding student: error", JOptionPane.ERROR_MESSAGE);
-                    ageInputField.setText("");
-                } else {
-                    admin.addStudentRecord(record);
-                    JOptionPane.showMessageDialog(MyFrame.this, "Student added", "Adding student", JOptionPane.INFORMATION_MESSAGE);
+                if (nameInputField.getText().trim().isEmpty()
+                        || ageInputField.getText().trim().isEmpty()
+                        || gradeInputField.getText().trim().isEmpty()
+                        || departmentInputField.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(MyFrame.this,
+                            "Please fill the form",
+                            "Adding student: error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
 
+
+                int age;
+                try {
+                    age = Integer.parseInt(ageInputField.getText().trim());
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(MyFrame.this,
+                            "Age must be a whole number.",
+                            "Adding student: error",
+                            JOptionPane.ERROR_MESSAGE);
+                    ageInputField.setText("");
+                    return;
+                }
+                if (!record.setAge(age)) {
+                    JOptionPane.showMessageDialog(MyFrame.this,
+                            "Age must be larger than 17.",
+                            "Adding student: error",
+                            JOptionPane.ERROR_MESSAGE);
+                    ageInputField.setText("");
+                    return;
+                }
+
+                double gpa;
+                try {
+                    gpa = Double.parseDouble(gradeInputField.getText().trim());
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(MyFrame.this,
+                            "GPA must be a number",
+                            "Adding student: error",
+                            JOptionPane.ERROR_MESSAGE);
+                    gradeInputField.setText("");
+                    return;
+                }
+                if (!record.setGPA(gpa)) {
+                    JOptionPane.showMessageDialog(MyFrame.this,
+                            "GPA must be between 0.0 and 4.0.",
+                            "Adding student: error",
+                            JOptionPane.ERROR_MESSAGE);
+                    gradeInputField.setText("");
+                    return;
+                }
+
+                String name = nameInputField.getText().trim();
+                if(!name.matches("[a-zA-Z]+")) {
+                    JOptionPane.showMessageDialog(MyFrame.this,
+                            "Error: name must be only letters",
+                            "Student adding: error",
+                            JOptionPane.ERROR_MESSAGE);
+                    nameInputField.setText("");
+                    return;
+                }
+
+                String dept = departmentInputField.getText().trim();
+                if(!dept.matches("[a-zA-Z]+")) {
+                    JOptionPane.showMessageDialog(MyFrame.this,
+                            "Error: department must be only letters",
+                            "Student adding: error",
+                            JOptionPane.ERROR_MESSAGE);
+                    departmentInputField.setText("");
+                    return;
+                }
+
+                record.setName(name);
+                record.setGender(genderInputBox.getSelectedItem().toString());
+                record.setDepartment(dept);
+
+                admin.addStudentRecord(record);
+
+                JOptionPane.showMessageDialog(MyFrame.this,
+                        "Student added",
+                        "Adding student",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+
+                nameInputField.setText("");
+                ageInputField.setText("");
+                gradeInputField.setText("");
+                departmentInputField.setText("");
+                genderInputBox.setSelectedIndex(0);
             }
         });
 
