@@ -1,4 +1,4 @@
-123,Mi,19,male,compu,3.91
-255,dodo,23,male,compu,3.99
 15,krkr,25,female,electro,4.0
 30,liy,30,female,electro,3.0
+123,Mi,19,male,compu,3.91
+255,dodo,23,male,compu,3.99

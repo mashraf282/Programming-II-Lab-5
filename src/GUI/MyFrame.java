@@ -345,7 +345,7 @@ public class MyFrame extends JFrame {
         this.add(createHeaderPanel(delete ? "Delete Students Menus" : "View Students Menu"));
 
         String[] columnNames = {"ID", "Name", "Age", "Gender", "Department", "GPA"};
-        String[][] students = admin.getDatabase().toStringArray();
+        String[][] students = admin.returnAllStudentsID();
         DefaultTableModel model = new DefaultTableModel(students, columnNames);
 
         JTable viewTable = new JTable(model) {

@@ -39,23 +39,23 @@ public class AdminRole {
         return database.toStringArray(database.getStudentRecords());
     }
 
-    public String[][] returnAllStudentsByName() {
-        Collections.sort(database.getStudentRecords(), Comparator.comparing(StudentRecord::getName));
+//    public String[][] returnAllStudentsByName() {
+//        Collections.sort(database.getStudentRecords(), Comparator.comparing(StudentRecord::getName));
+//
+//        return database.toStringArray(database.getStudentRecords());
+//    }
 
-        return database.toStringArray(database.getStudentRecords());
-    }
-
-    public void updateStudentRecord(StudentRecord record) {
-        for (StudentRecord student : database.getStudentRecords()) {
-            if (student.getStudentId() == record.getStudentId()) {
-                student.setName(record.getName());
-                student.setAge(record.getAge());
-                student.setGender(record.getGender());
-                student.setDepartment(record.getDepartment());
-                student.setGPA(record.getGPA());
-            }
-        }
-    }
+//    public void updateStudentRecord(StudentRecord record) {
+//        for (StudentRecord student : database.getStudentRecords()) {
+//            if (student.getStudentId() == record.getStudentId()) {
+//                student.setName(record.getName());
+//                student.setAge(record.getAge());
+//                student.setGender(record.getGender());
+//                student.setDepartment(record.getDepartment());
+//                student.setGPA(record.getGPA());
+//            }
+//        }
+//    }
 
     public boolean deleteStudentRecord(StudentRecord record) {
         if (database.contains(record.getStudentId())) {

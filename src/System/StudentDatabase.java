@@ -94,28 +94,6 @@ public class StudentDatabase {
         studentRecords.add(record);
     }
 
-    public String[][] sortByGPA(){
-        studentRecords.sort(Comparator.comparingDouble(StudentRecord::getGPA));
-        return toStringArray(studentRecords);
-    }
-
-    public String[][] filterByGPA(Double minGPA, Double maxGPA){
-        ArrayList<StudentRecord> students  = new ArrayList<>();
-        for(StudentRecord record : studentRecords){
-            if(record.getGPA() > minGPA && record.getGPA() < maxGPA)
-                students.add(record);
-        }
-        return toStringArray(students);
-    }
-
-    public String[][] filterByGPA(Double gpa){
-        ArrayList<StudentRecord> students  = new ArrayList<>();
-        for(StudentRecord record : studentRecords){
-            if(record.getGPA() == gpa)
-                students.add(record);
-        }
-        return toStringArray(students);
-    }
 
     public String[][] toStringArray(ArrayList<StudentRecord> students) {
         String[][] records = new String[students.size()][6];
@@ -135,8 +113,6 @@ public class StudentDatabase {
         return toStringArray(this.studentRecords);
     }
 
-    public void filterByGrade(String grade){
-        // implement filtering by grade
-    }
+
 
 }

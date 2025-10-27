@@ -80,9 +80,6 @@ public class StudentRecord {
         return this.studentId+","+this.name+","+this.age+","+this.gender+","+this.department+","+this.gpa;
     }
 
-    public String[] arrayRepresentation(){
-        return null;
-    }
 
 
 
